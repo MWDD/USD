@@ -24,12 +24,14 @@ pxr_shared_library(glf
         ${PTEX_LIBRARY}
         ${GLEW_LIBRARY}
         ${X11_LIBRARIES}
+        ${OPENEXR_LIBRARY}
 
     INCLUDE_DIRS
         ${OIIO_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIRS}
         ${GLEW_INCLUDE_DIR}
         ${PTEX_INCLUDE_DIR}
+        ${OPENEXR_INCLUDE_DIRS}
 
     PUBLIC_CLASSES
         arrayTexture
@@ -68,6 +70,9 @@ pxr_shared_library(glf
         debugCodes
         glContextRegistry
 
+    PUBLIC_HEADERS
+        api.h
+        
     PRIVATE_HEADERS
         rankedTypeMap.h
 

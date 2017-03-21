@@ -46,7 +46,7 @@
 #include "pxr/usd/ar/resolver.h"
 #include "pxr/usd/ar/resolverContext.h"
 
-#include "pxr/usd/usd/treeIterator.h"
+#include "pxr/usd/usd/primRange.h"
 
 #include "pxr/usd/usdGeom/tokens.h"
 
@@ -281,7 +281,7 @@ public:
 
 private:
     struct _Task {
-        _Task() : delegate(NULL), requestBits(NULL) { }
+        _Task() : delegate(NULL), requestBits(0) { }
         _Task(UsdImagingDelegate* delegate_, const SdfPath& path_, 
                         HdDirtyBits requestBits_)
             : delegate(delegate_)
@@ -977,7 +977,7 @@ UsdImagingDelegate::_Populate(UsdImagingIndexProxy* proxy)
     leafPaths.reserve(pathsToRepopulate.size());
 
     TF_FOR_ALL(rootPathIt, pathsToRepopulate) {
-        UsdTreeIterator treeIt(_GetPrim(*rootPathIt));
+        UsdPrimRange treeIt(_GetPrim(*rootPathIt));
 
         // Discover and insert all renderable prims into the worker for later
         // execution.
@@ -1403,7 +1403,7 @@ UsdImagingDelegate::_ResyncPrim(SdfPath const& rootPath,
         // If this path was not pruned by a parent, discover all prims that were
         // newly added with this change.
         if (!prunedByParent) {
-            UsdTreeIterator treeIt(prim);
+            UsdPrimRange treeIt(prim);
 
             for (;treeIt;++treeIt) {
                 if (prunedByParent)
@@ -2302,22 +2302,27 @@ UsdImagingDelegate::PopulateSelection(SdfPath const &path,
         // Prim, or instancer
         return adapter->PopulateSelection(usdPath, instanceIndices, result);
     } else {
-        // Select all rprims directly under the path (if any)
+        // Select rprims that are part of the path subtree. Exclude proto paths 
+        // since they will be added later in this function when iterating 
+        // through the different instances.
         SdfPathVector const& rprimPaths = GetRenderIndex().GetRprimSubtree(path);
-        TF_FOR_ALL (rprimPath, rprimPaths){
+        TF_FOR_ALL (rprimPath, rprimPaths) {
+            if ((*rprimPath).IsPropertyPath()) {
+                continue;
+            }
             result->AddRprim(*rprimPath);
             added = true;
         }
 
-        // Iterate the adapter map to figure out what instancers exists 
-        // under the selected paths and populate the selection.
+        // Iterate the adapter map to figure out if there is (at least) one
+        // instancer under the selected path, and then populate the selection
         std::pair<UsdImagingDelegate::_PathAdapterMap::iterator,
                   UsdImagingDelegate::_PathAdapterMap::iterator> 
                   range = _pathAdapterMap.FindSubtreeRange(usdPath);
         for (UsdImagingDelegate::_PathAdapterMap::iterator it = range.first; 
              it != range.second; it++) {
 
-            // We are looking for instances of instancers, so if there is 
+            // We are looking for instancers, so if there is 
             // no adapter let's ignore it and keep iterating
             _AdapterSharedPtr const &adapter = it->second;
             if (!adapter) {
@@ -2328,11 +2333,13 @@ UsdImagingDelegate::PopulateSelection(SdfPath const &path,
             // if so, let's populate the selection to that instance.
             SdfPath instancePath = it->first;
             SdfPath instancerPath = adapter->GetInstancer(instancePath);
-            if (!instancerPath.IsEmpty()) {
-                adapter->PopulateSelection(instancePath,
-                                           instanceIndices, 
-                                           result);
-                added = true;
+            if (!instancerPath.IsEmpty()) {                
+                // We don't need to take into account specific indices when 
+                // doing subtree selections.
+                added |= adapter->PopulateSelection(usdPath,
+                                                  VtIntArray(), 
+                                                  result);
+                break;
             }
         }
     }

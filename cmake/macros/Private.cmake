@@ -22,7 +22,6 @@
 # language governing permissions and limitations under the Apache License.
 #
 include(Version)
-include(CXXDefaults)
 
 function(_install_headers LIBRARY_NAME)
     set(options  "")
@@ -242,6 +241,11 @@ function(_install_pyside_ui_files)
 
     add_custom_target(${LIBRARY_NAME}_pysideuifiles ALL
         DEPENDS ${uiFiles}
+    )
+    set_target_properties(
+        ${LIBRARY_NAME}_pysideuifiles
+        PROPERTIES
+            FOLDER "${PXR_PREFIX}/_pysideuifiles"
     )
 
     set(libPythonPrefix lib/python)

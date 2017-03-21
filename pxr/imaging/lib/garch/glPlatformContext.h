@@ -27,6 +27,7 @@
 /// \file garch/glPlatformContext.h
 
 #include "pxr/pxr.h"
+#include "pxr/imaging/garch/api.h"
 #include "pxr/base/arch/defines.h"
 #include <cstddef>
 
@@ -40,8 +41,7 @@
 
 #elif defined ARCH_OS_WINDOWS
 
-// XXX: TODO
-// #include "pxr/imaging/garch/glPlatformContextWindows.h"
+#include "pxr/imaging/garch/glPlatformContextWindows.h"
 
 #else
 
@@ -51,7 +51,7 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-GarchGLPlatformContextState GarchGetNullGLPlatformContextState();
+GARCH_API GarchGLPlatformContextState GarchGetNullGLPlatformContextState();
 
 inline
 size_t

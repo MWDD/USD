@@ -6,6 +6,10 @@ if(NOT ALEMBIC_FOUND)
     return()
 endif()
 
+if (PXR_ENABLE_MULTIVERSE_SUPPORT)
+    add_definitions(-DUSDABC_MULTIVERSE_SUPPORT)
+endif()
+
 pxr_plugin(usdAbc
     LIBRARIES
         tf
@@ -16,10 +20,12 @@ pxr_plugin(usdAbc
         ${HDF5_LIBRARIES}
         ${HDF5_HL_LIBRARIES}
         ${OPENEXR_Iex_LIBRARY}
+        ${OPENEXR_Half_LIBRARY}
 
     INCLUDE_DIRS
         ${ALEMBIC_INCLUDE_DIR}
         ${HDF5_INCLUDE_DIRS}
+        ${OPENEXR_INCLUDE_DIRS}
 
     PRIVATE_CLASSES
         alembicData

@@ -24,7 +24,7 @@
 #include "pxr/pxr.h"
 #include "pxr/usd/usd/stage.h"
 #include "pxr/usd/usd/conversions.h"
-#include "pxr/usd/usd/treeIterator.h"
+#include "pxr/usd/usd/primRange.h"
 
 #include "pxr/usd/ar/resolverContext.h"
 #include "pxr/usd/pcp/pyUtils.h"
@@ -372,10 +372,10 @@ void wrapUsdStage()
         .def("HasDefaultPrim", &UsdStage::HasDefaultPrim)
 
         .def("GetPrimAtPath", &UsdStage::GetPrimAtPath, arg("path"))
-        .def("Traverse", (UsdTreeIterator (UsdStage::*)())
+        .def("Traverse", (UsdPrimRange (UsdStage::*)())
              &UsdStage::Traverse)
         .def("Traverse",
-             (UsdTreeIterator (UsdStage::*)(const Usd_PrimFlagsPredicate &))
+             (UsdPrimRange (UsdStage::*)(const Usd_PrimFlagsPredicate &))
              &UsdStage::Traverse, arg("predicate"))
         .def("TraverseAll", &UsdStage::TraverseAll)
 

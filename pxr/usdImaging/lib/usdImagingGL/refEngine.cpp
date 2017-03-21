@@ -37,7 +37,7 @@
 #include "pxr/usd/usd/prim.h"
 #include "pxr/usd/usd/relationship.h"
 #include "pxr/usd/usd/stage.h"
-#include "pxr/usd/usd/treeIterator.h"
+#include "pxr/usd/usd/primRange.h"
 
 // Geometry Schema
 #include "pxr/usd/usdGeom/scope.h"
@@ -611,7 +611,7 @@ UsdImagingGLRefEngine::_TraverseStage(const UsdPrim& root)
 {
     // Instead of using root.begin(), setup a special iterator that does both
     // pre-order and post-order traversal so we can push and pop state.
-    UsdTreeIterator primIt = UsdTreeIterator::PreAndPostVisit(root);
+    UsdPrimRange primIt = UsdPrimRange::PreAndPostVisit(root);
 
     UsdPrim pseudoRoot = root.GetStage()->GetPseudoRoot();
 

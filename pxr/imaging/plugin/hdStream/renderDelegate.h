@@ -40,8 +40,6 @@ public:
     HdStreamRenderDelegate();
     virtual ~HdStreamRenderDelegate() = default;
 
-    virtual TfToken GetDefaultGalId() const override;
-
     virtual HdRenderParam *GetRenderParam() const override;
 
     virtual const TfTokenVector &GetSupportedSprimTypes() const override;
@@ -61,6 +59,8 @@ public:
                                  SdfPath const& bprimId) override;
     virtual HdBprim *CreateFallbackBprim(TfToken const& typeId) override;
     virtual void DestroyBprim(HdBprim *bPrim) override;
+
+    virtual void CommitResources(HdChangeTracker *tracker) override;
 
 private:
     static const TfTokenVector SUPPORTED_SPRIM_TYPES;

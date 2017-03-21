@@ -21,7 +21,6 @@ pxr_shared_library(hdx
 
     PUBLIC_CLASSES
         camera
-        debugCodes
         drawTarget
         drawTargetAttachmentDesc
         drawTargetAttachmentDescArray
@@ -32,6 +31,8 @@ pxr_shared_library(hdx
         intersector
         light
         package
+        rendererPlugin
+        rendererPluginRegistry
         renderTask
         renderSetupTask
         selectionTask
@@ -40,14 +41,17 @@ pxr_shared_library(hdx
         simpleLightingShader
         simpleLightTask
         simpleLightBypassTask
+        taskController
         tokens
         types
 
     PUBLIC_HEADERS
         shadowMatrixComputation.h
         version.h
+        api.h
 
     PRIVATE_CLASSES
+        debugCodes
         drawTargetTextureResource
         unitTestDelegate
 

@@ -20,7 +20,6 @@ pxr_shared_library(hd
         sdf
         garch
         hf
-        gal
         glf
         pxOsd
         ${OPENSUBDIV_LIBRARIES}
@@ -48,7 +47,6 @@ pxr_shared_library(hd
         codeGen
         commandBuffer
         computation
-        context
         conversions
         copyComputation
         debugCodes
@@ -73,6 +71,7 @@ pxr_shared_library(hd
         lightingShader
         mesh
         meshTopology
+        meshUtil
         package
         patchIndex
         perfLog
@@ -113,6 +112,7 @@ pxr_shared_library(hd
         vtBufferSource
 
     PUBLIC_HEADERS
+        api.h
         enums.h
         types.h
         version.h

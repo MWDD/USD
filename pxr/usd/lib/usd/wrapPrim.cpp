@@ -47,19 +47,10 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-
 using std::string;
 using std::vector;
 
 using namespace boost::python;
-
-static SdfPayload
-_GetPayload(const UsdPrim &self)
-{
-    SdfPayload result;
-    self.GetPayload(&result);
-    return result;
-}
 
 static SdfPathVector
 _FindAllRelationshipTargetPaths(
@@ -230,7 +221,6 @@ void wrapUsdPrim()
              (arg("predicate")=object(), arg("recurseOnTargets")=false))
 
         .def("HasPayload", &UsdPrim::HasPayload)
-        .def("GetPayload", _GetPayload)
         .def("SetPayload",
              (bool (UsdPrim::*)(const SdfPayload &) const)
              &UsdPrim::SetPayload, (arg("payload")))
@@ -268,6 +258,9 @@ void wrapUsdPrim()
         .def("IsInMaster", &UsdPrim::IsInMaster)
         .def("GetMaster", &UsdPrim::GetMaster)
 
+        .def("IsInstanceProxy", &UsdPrim::IsInstanceProxy)
+        .def("GetPrimInMaster", &UsdPrim::GetPrimInMaster)
+
         // Exposed only for testing and debugging.
         .def("_GetSourcePrimIndex", &UsdPrim::_GetSourcePrimIndex,
              return_value_policy<return_by_value>())
@@ -275,9 +268,6 @@ void wrapUsdPrim()
 
     TfPyRegisterStlSequencesFromPython<UsdPrim>();
 }
-
-
-
 
 PXR_NAMESPACE_CLOSE_SCOPE
 

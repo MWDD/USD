@@ -72,7 +72,7 @@ class Usd_InstanceChanges;
 class Usd_InterpolatorBase;
 class UsdResolveInfo;
 class Usd_Resolver;
-class UsdTreeIterator;
+class UsdPrimRange;
 
 SDF_DECLARE_HANDLES(SdfLayer);
 
@@ -510,8 +510,7 @@ public:
     /// \ref Usd_workingSetManagement "Working Set Management" for a discussion
     /// of what paths are considered valid.
     USD_API
-    UsdPrim
-    Load(const SdfPath& path=SdfPath::AbsoluteRootPath());
+    UsdPrim Load(const SdfPath& path=SdfPath::AbsoluteRootPath());
 
     /// Unload the prim and its descendants specified by \p path.
     ///
@@ -526,8 +525,7 @@ public:
     /// \ref Usd_workingSetManagement "Working Set Management" for a discussion
     /// of what paths are considered valid.
     USD_API
-    void
-    Unload(const SdfPath& path=SdfPath::AbsoluteRootPath());
+    void Unload(const SdfPath& path=SdfPath::AbsoluteRootPath());
 
     /// Unloads and loads the given path sets; the effect is as if the
     /// unload set were processed first followed by the load set.
@@ -541,7 +539,6 @@ public:
     /// \ref Usd_workingSetManagement "Working Set Management" for a discussion
     /// of what paths are considered valid.
     USD_API
-    
     void LoadAndUnload(const SdfPathSet &loadSet, const SdfPathSet &unloadSet);
 
     /// Returns a set of all loaded paths.
@@ -566,7 +563,7 @@ public:
     /// SdfPathSet loaded = stage->GetLoadSet(),
     ///            all = stage->FindLoadable(),
     ///            result;
-    /// std::set_difference(loadedz.begin(), loaded.end(),
+    /// std::set_difference(loaded.begin(), loaded.end(),
     ///                     all.begin(), all.end(),
     ///                     std::inserter(result, result.end()));
     /// \endcode
@@ -660,8 +657,11 @@ public:
     USD_API
     bool HasDefaultPrim() const;
 
-    /// Return the already extant UsdPrim at \p path, or an invalid UsdPrim if
-    /// none exists.
+    /// Return the UsdPrim at \p path, or an invalid UsdPrim if none exists.
+    /// 
+    /// If \p path indicates a prim beneath an instance, returns an instance
+    /// proxy prim if a prim exists at the corresponding path in that instance's 
+    /// master.
     ///
     /// Unlike OverridePrim() and DefinePrim(), this method will never author
     /// scene description, and therefore is safe to use as a "reader" in the Usd
@@ -674,6 +674,12 @@ private:
     Usd_PrimDataConstPtr _GetPrimDataAtPath(const SdfPath &path) const;
     Usd_PrimDataPtr _GetPrimDataAtPath(const SdfPath &path);
 
+    // Return the primData object at \p path.  If \p path indicates a prim
+    // beneath an instance, return the primData object for the corresponding 
+    // prim in the instance's master.
+    Usd_PrimDataConstPtr 
+    _GetPrimDataAtPathOrInMaster(const SdfPath &path) const;
+
     // A helper function for LoadAndUnload to aggregate notification data
     void _LoadAndUnload(const SdfPathSet&, const SdfPathSet&, 
                         SdfPathSet*, SdfPathSet*);
@@ -683,7 +689,7 @@ public:
     /// Traverse the active, loaded, defined, non-abstract prims on this stage
     /// depth-first.
     ///
-    /// Traverse() returns a UsdTreeIterator , which allows low-latency
+    /// Traverse() returns a UsdPrimRange , which allows low-latency
     /// traversal, with the ability to prune subtrees from traversal.  It
     /// is python iterable, so in its simplest form, one can do:
     ///
@@ -693,25 +699,25 @@ public:
     /// \endcode
     ///
     /// If either a pre-and-post-order traversal or a traversal rooted at a
-    /// particular prim is desired, construct a UsdTreeIterator directly.
+    /// particular prim is desired, construct a UsdPrimRange directly.
     ///
-    /// This is equivalent to UsdTreeIterator::Stage() . 
+    /// This is equivalent to UsdPrimRange::Stage() . 
     USD_API
-    UsdTreeIterator Traverse();
+    UsdPrimRange Traverse();
 
     /// \overload
     /// Traverse the prims on this stage subject to \p predicate.
     ///
-    /// This is equivalent to UsdTreeIterator::Stage() .
+    /// This is equivalent to UsdPrimRange::Stage() .
     USD_API
-    UsdTreeIterator Traverse(const Usd_PrimFlagsPredicate &predicate);
+    UsdPrimRange Traverse(const Usd_PrimFlagsPredicate &predicate);
 
     /// Traverse all the prims on this stage depth-first.
     ///
     /// \sa Traverse()
-    /// \sa UsdTreeIterator::Stage()
+    /// \sa UsdPrimRange::Stage()
     USD_API
-    UsdTreeIterator TraverseAll();
+    UsdPrimRange TraverseAll();
 
     /// Attempt to ensure a \a UsdPrim at \p path exists on this stage.
     ///

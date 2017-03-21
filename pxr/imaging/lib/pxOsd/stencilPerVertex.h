@@ -27,6 +27,7 @@
 /// \file pxOsd/stencilPerVertex.h
 
 #include "pxr/pxr.h"
+#include "pxr/imaging/pxOsd/api.h"
 #include "pxr/imaging/pxOsd/meshTopology.h"
 
 #include <boost/shared_ptr.hpp>
@@ -43,6 +44,7 @@ public:
     // constructs surface locations corresponding to the control vertices,
     // instead of performing numerical closest-point projection.
     //
+    PXOSD_API
     static boost::shared_ptr<const OpenSubdiv::Far::LimitStencilTable>
     GetStencilPerVertex(PxOsdMeshTopology topology,
                         const int level);

@@ -30,7 +30,7 @@
 #include "pxr/usd/usd/prim.h"
 #include "pxr/usd/usd/schemaBase.h"
 #include "pxr/usd/usd/stage.h"
-#include "pxr/usd/usd/treeIterator.h"
+#include "pxr/usd/usd/primRange.h"
 #include "pxr/usd/usdGeom/imageable.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -64,7 +64,7 @@ UsdviewqUtils::_GetAllPrimsOfType(UsdStagePtr const &stage,
                                   TfType const& schemaType)
 {
     std::vector<UsdPrim> result;
-    for(UsdTreeIterator it = stage->Traverse(); it; ++it) {
+    for(UsdPrimRange it = stage->Traverse(); it; ++it) {
         if (_IsA(*it, schemaType))
             result.push_back(*it);
     }

@@ -148,7 +148,7 @@ namespace
         VtIntArray& outputIndices,
         std::vector<GfRange3d>& outputBounds)
     {
-        const double currentTime = data.GetUsdInArgs()->GetCurrentTime();
+        const double currentTime = data.GetCurrentTime();
 
         std::vector<std::string> prototypePaths =
                 _ConvertRelationshipTargets(instancer.GetPrototypesRel());
@@ -222,7 +222,8 @@ namespace
             for (size_t i = 0; i < protoIndices.size(); ++i)
             {
                 int index = protoIndices[i];
-                if (index < 0 || index >= prototypePaths.size())
+                if (index < 0 
+                    || static_cast<size_t>(index) >= prototypePaths.size())
                 {
                     outputIndices.push_back(-1);
                 }
@@ -295,7 +296,7 @@ namespace
         // NOTE We assume that the instancer's positions and velocities have
         // already been validated.
 
-        const double currentTime = data.GetUsdInArgs()->GetCurrentTime();
+        const double currentTime = data.GetCurrentTime();
         const std::vector<double> motionSampleTimes = data.GetMotionSampleTimes();
 
         VtIntArray protoIndices;
@@ -416,7 +417,7 @@ namespace
             FnKat::StringAttribute("usd"));
 
         proxiesBuilder.set("viewer.load.opArgs.a.currentTime", 
-            FnKat::DoubleAttribute(data.GetUsdInArgs()->GetCurrentTime()));
+            FnKat::DoubleAttribute(data.GetCurrentTime()));
 
         proxiesBuilder.set("viewer.load.opArgs.a.fileName", 
             FnKat::StringAttribute(data.GetUsdInArgs()->GetFileName()));
@@ -452,7 +453,7 @@ PxrUsdKatanaReadPointInstancer(
         PxrUsdKatanaAttrMap& instancesAttrMap,
         PxrUsdKatanaAttrMap& instancerOpArgsAttrMap)
 {
-    const double currentTime = data.GetUsdInArgs()->GetCurrentTime();
+    const double currentTime = data.GetCurrentTime();
 
     PxrUsdKatanaReadXformable(instancer, data, attrs);
 
@@ -643,7 +644,8 @@ PxrUsdKatanaReadPointInstancer(
     {
         int index = protoIndices[i];
 
-        if (index < 0 || index >= prototypePaths.size())
+        if (index < 0 
+            || static_cast<size_t>(index) >= prototypePaths.size())
         {
             _LogAndSetError(attrs, TfStringPrintf(
                     "ERROR: prototype index %i out of range", index));
@@ -771,7 +773,8 @@ PxrUsdKatanaReadPointInstancer(
         {
             int boundIndex = prototypeBoundIndices[i];
 
-            if (boundIndex >= 0 && boundIndex < prototypeBounds.size())
+            if (boundIndex >= 0 
+                && static_cast<size_t>(boundIndex) < prototypeBounds.size())
             {
                 // Get this instance's bounds in parent-local coords
                 //
@@ -780,7 +783,7 @@ PxrUsdKatanaReadPointInstancer(
                 // Transform bounds into parent-local coords (at all time
                 // samples).
                 //
-                for (int timeSample = 0; timeSample < xformSampleTimes.size();
+                for (size_t timeSample = 0; timeSample < xformSampleTimes.size();
                         ++timeSample)
                 {
                     GfMatrix4d matrix =
